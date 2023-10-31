@@ -1,6 +1,9 @@
 import os
 import glob
 import re
+import datetime
+from tqdm import tqdm
+import json
 
 
 def remove_head_and_tail_double_quotations(arg: str):
@@ -73,5 +76,33 @@ def remove_comment_of_python(src: str, dst: str, targets=[], rm_docstring=True):
     f_dst.close()
 
 
+def main(src: str, targets: list, rm_docstring: bool, *, dst_folder_name='dst'):
+    src_dir = remove_head_and_tail_double_quotations(src)
+
+    if os.path.isdir(src_dir):  # TODO: 231031 現状はディレクトリ配下のみだが、単体ファイルでも実行できるといいかも？
+        now = datetime.datetime.strftime(datetime.datetime.now(), '%y%m%d_%H%M%S')
+        dst_dir = os.path.dirname(src_dir) + r'\{}_{}'.format(dst_folder_name, now)
+        flist = glob.glob('{}/**/*.py'.format(src_dir), recursive=True)
+
+        for src_path in tqdm(flist):
+            dst_path = src_path.replace(src_dir, dst_dir)
+            remove_comment_of_python(src=src_path, dst=dst_path, targets=targets, rm_docstring=rm_docstring)
+
+
 if __name__ == '__main__':
-    pass
+    print('コメント削除したいフルパスのディレクトリを指定してください。')
+    src = input('> ')
+    assert os.path.exists(src)
+
+    print('削除したいレベルを指定してください。')
+    print('1: TODO:, FIXME:, EDIT: のみ')
+    print('2: + INFO, [START], [END]')
+    print('3: + docscting')
+    print('4: + コメント全て (暴発多いので注意せよ)')
+    level = input('> ')
+
+    with open('config.json', 'r') as f:
+        config = json.load(f)
+
+    kwargs = config[level]
+    main(src=src, **kwargs)
