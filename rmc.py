@@ -92,8 +92,9 @@ def main(src: str, targets: list, rm_docstring: bool, *, dst_folder_name='dst'):
 if __name__ == '__main__':
     print('コメント削除したいフルパスのディレクトリを指定してください。')
     src = input('> ')
-    assert os.path.exists(src)
+    assert os.path.exists(remove_head_and_tail_double_quotations(src))
 
+    print('')
     print('削除したいレベルを指定してください。')
     print('1: TODO:, FIXME:, EDIT: のみ')
     print('2: + INFO, [START], [END]')

@@ -4,11 +4,11 @@
         "rm_docstring": false
     },
     "2": {
-        "targets": ["TODO:", "FIXME:", "EDIT:", "INFO:", "[START]", "[END]"],
+        "targets": ["TODO:", "FIXME:", "EDIT:", "INFO:", "\\[START\\]", "\\[END\\]"],
         "rm_docstring": false
     },
     "3": {
-        "targets": ["TODO:", "FIXME:", "EDIT:", "INFO:", "[START]", "[END]"],
+        "targets": ["TODO:", "FIXME:", "EDIT:", "INFO:", "\\[START\\]", "\\[END\\]"],
         "rm_docstring": true
     },
     "4": {
