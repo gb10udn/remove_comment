@@ -6,6 +6,8 @@ from tqdm import tqdm
 import json
 
 
+# HACK: 240124 mypy を導入して、静的解析を入れる。
+
 def remove_head_and_tail_double_quotations(arg: str):
     """
     最初と最後のダブルクオーテーションであれば、取り除いて返す。
@@ -30,9 +32,9 @@ def obtain_pattern(targets: list):
     return '|'.join(pattern)
 
 
-def remove_comment_of_python(src: str, dst: str, targets=[], rm_docstring=True):
+def remove_comment_of_python(src: str, dst: str, targets: list=[], rm_docstring: bool=True):
     """
-    dst が None の場合は、書き換えを実行せず、中身を確認する。
+    dst が None の場合は、書き換えを実行せず、中身を確認する。  # FIXME: 240124 確認とは何を指すのか？
 
     Parameters
     ----------
@@ -76,7 +78,7 @@ def remove_comment_of_python(src: str, dst: str, targets=[], rm_docstring=True):
     f_dst.close()
 
 
-def main(src: str, targets: list, rm_docstring: bool, *, dst_folder_name='dst'):
+def main(src: str, targets: list, rm_docstring: bool, *, dst_folder_name: str='dst'):  # TODO: 240124 出力先がどうなのかわからず、上書きされるのが怖くなってしまうことがある。
     src_dir = remove_head_and_tail_double_quotations(src)
 
     if os.path.isdir(src_dir):  # TODO: 231031 現状はディレクトリ配下のみだが、単体ファイルでも実行できるといいかも？
@@ -90,13 +92,13 @@ def main(src: str, targets: list, rm_docstring: bool, *, dst_folder_name='dst'):
 
 
 if __name__ == '__main__':
-    print('コメント削除したいフルパスのディレクトリを指定してください。')
+    print('コメント削除したいフルパスのディレクトリを指定してください。')  # TODO: 240124 練習を兼ねて、Rust で再実装してもいいかも？処理速度も上がるし。
     src = input('> ')
     assert os.path.exists(remove_head_and_tail_double_quotations(src))
 
     print('')
     print('削除したいレベルを指定してください。')
-    print('1: TODO:, FIXME:, EDIT: のみ')
+    print('1: TODO:, FIXME:, EDIT: のみ')  # TODO: 240123 HACK: を追加すること。
     print('2: + INFO, [START], [END]')
     print('3: + docscting')
     print('4: + コメント全て (暴発多いので注意せよ)')

@@ -1,7 +1,7 @@
 dst_*/*
 test/*
 __pycache__/*
-.venv_rmc/
+.venv/
 .ipynb_checkpoints/*
 *.zip
 *.ipynb
