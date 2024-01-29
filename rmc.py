@@ -2,11 +2,10 @@ import os
 import glob
 import re
 import datetime
-from tqdm import tqdm
 import json
+from tqdm import tqdm
+import questionary
 
-
-# HACK: 240124 mypy を導入して、静的解析を入れる。
 
 def remove_head_and_tail_double_quotations(arg: str):
     """
@@ -78,7 +77,7 @@ def remove_comment_of_python(src: str, dst: str, targets: list=[], rm_docstring:
     f_dst.close()
 
 
-def main(src: str, targets: list, rm_docstring: bool, *, dst_folder_name: str='dst'):  # TODO: 240124 出力先がどうなのかわからず、上書きされるのが怖くなってしまうことがある。
+def main(src: str, targets: list, rm_docstring: bool, *, dst_folder_name: str='dst'):  # TODO: 240124 出力先の仕様を明示する。(このプログラムの配下に生成するのが望ましい気がする。)
     src_dir = remove_head_and_tail_double_quotations(src)
 
     if os.path.isdir(src_dir):  # TODO: 231031 現状はディレクトリ配下のみだが、単体ファイルでも実行できるといいかも？
@@ -92,20 +91,23 @@ def main(src: str, targets: list, rm_docstring: bool, *, dst_folder_name: str='d
 
 
 if __name__ == '__main__':
-    print('コメント削除したいフルパスのディレクトリを指定してください。')  # TODO: 240124 練習を兼ねて、Rust で再実装してもいいかも？処理速度も上がるし。
-    src = input('> ')
-    assert os.path.exists(remove_head_and_tail_double_quotations(src))
+    src = questionary.text('コメント削除したいフルパスのディレクトリを指定してください。').ask()
+    assert os.path.exists(remove_head_and_tail_double_quotations(src)), "入力したパスが存在しません。"
 
-    print('')
-    print('削除したいレベルを指定してください。')
-    print('1: TODO:, FIXME:, EDIT: のみ')  # TODO: 240123 HACK: を追加すること。
-    print('2: + INFO, [START], [END]')
-    print('3: + docscting')
-    print('4: + コメント全て (暴発多いので注意せよ)')
-    level = input('> ')
+    LEVEL_INFO = {
+        '1: TODO:, FIXME:, EDIT: のみ': '1',
+        '2: + INFO, [START], [END]': '2',
+        '3: + docscting': '3',
+        '4: + コメント全て (暴発多いので注意せよ)': '4',
+    }
+
+    level = questionary.select(
+        '削除したいレベルを指定してください。',  # TODO: 240123 HACK: を追加すること。
+        choices=list(LEVEL_INFO.keys()),
+    ).ask()
 
     with open('config.json', 'r') as f:
         config = json.load(f)
 
-    kwargs = config[level]
+    kwargs = config[LEVEL_INFO[level]]
     main(src=src, **kwargs)
