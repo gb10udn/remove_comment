@@ -83,7 +83,7 @@ def main(src: str, targets: list, rm_docstring: bool, *, dst_folder_name: str='d
     if os.path.isdir(src_dir):  # TODO: 231031 現状はディレクトリ配下のみだが、単体ファイルでも実行できるといいかも？
         now = datetime.datetime.strftime(datetime.datetime.now(), '%y%m%d_%H%M%S')
         dst_dir = os.path.dirname(src_dir) + r'\{}_{}'.format(dst_folder_name, now)
-        flist = glob.glob('{}/**/*.py'.format(src_dir), recursive=True)
+        flist = glob.glob('{}/**/*.py'.format(src_dir), recursive=True)  # TODO: 240129 現状、.py のみだが、関連ファイルも一緒にコピーできるようにすべき。
 
         for src_path in tqdm(flist):
             dst_path = src_path.replace(src_dir, dst_dir)
@@ -98,7 +98,7 @@ if __name__ == '__main__':
         '1: TODO:, FIXME:, EDIT: のみ': '1',
         '2: + INFO, [START], [END]': '2',
         '3: + docscting': '3',
-        '4: + コメント全て (暴発多いので注意せよ)': '4',
+        '4: + コメント全て (暴発多いので注意せよ)': '4',  # TODO: 240129 暴発パターンを修正すること。(re の # が少なくとも存在していた。)
     }
 
     level = questionary.select(
